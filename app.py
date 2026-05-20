@@ -5,8 +5,8 @@ from utils.parser import extract_text_from_pdf
 from utils.preprocess import clean_text
 from utils.skills import extract_skills
 from utils.matcher import get_match_score
-
-
+from utils.insights import  generate_recruiter_summary
+from utils.interview import generate_questions
 # -----------------------------------
 # PAGE CONFIG
 # -----------------------------------
@@ -158,14 +158,22 @@ if uploaded_file is not None and jd_text:
     missing_skills = list(
         set(jd_skills) - set(skills)
     )
-
+    summary = generate_recruiter_summary(score,matched_skills,missing_skills)
     # Recruiter insight
 
     insight = recruiter_insight(
         score,
         missing_skills
     )
+    st.subheader("AI Recruiter Summary")
 
+    st.info(summary)
+    if score >= 80: st.success( "Recommended for Interview")
+    elif score >= 60: st.warning  ( "Potential Candidate")
+    else: st.error("Low Recommendation Score")
+    with st.container(): 
+        st.subheader("Candidate Intelligence Report")
+        st.write(summary)
     # -----------------------------------
     # TOP METRICS
     # -----------------------------------
@@ -224,10 +232,11 @@ if uploaded_file is not None and jd_text:
     # TABS
     # -----------------------------------
 
-    tab1, tab2, tab3 = st.tabs([
+    tab1, tab2, tab3, tab4 = st.tabs([
         "Analysis",
         "Skills",
-        "Resume Data"
+        "Resume Data",
+        "Interview Questions"
     ])
 
     # -----------------------------------
@@ -325,6 +334,11 @@ if uploaded_file is not None and jd_text:
 
             st.write(jd_text)
 
+    with tab4:
+
+        st.subheader("generated Interview Questions")
+        questions = generate_questions( matched_skills)
+        for question in questions: st.info(question)
     # -----------------------------------
     # FOOTER
     # -----------------------------------

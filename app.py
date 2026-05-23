@@ -7,8 +7,18 @@ from utils.skills import extract_skills
 from utils.matcher import get_match_score
 from utils.insights import  generate_recruiter_summary
 from utils.interview import generate_questions
-from nltk.corpus import stopwords
-stop_words = set(stopwords.words("english"))
+import nltk
+try:
+    from nltk.corpus import stopwords
+    stop_words = set(
+        stopwords.words("english")
+    )
+except LookupError:
+    nltk.download("stopwords")
+    from nltk.corpus import stopwords
+    stop_words = set(
+        stopwords.words("english")
+    )
 st.set_page_config( page_title="HireSense AI", page_icon="📄",layout="wide")
 with st.sidebar:
     st.title("HireSense AI")
